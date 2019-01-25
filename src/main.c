@@ -8,6 +8,8 @@
 //#include <wlr/render.h> //Doesn't work against latest wlroots
 #include <wlr/render/wlr_renderer.h>
 #include <wlr/types/wlr_output.h>
+// #include <wlr/backend/x11.h> //requires wlroots to be built with x11 backend
+
 
 struct mcw_server {
 	struct wl_display *wl_display;
@@ -111,7 +113,8 @@ int main(int argc, char **argv) {
 	assert(server.wl_event_loop);
 
 	// server.backend = wlr_backend_autocreate(server.wl_display); //obsolete calling API
-	server.backend = wlr_backend_autocreate(server.wl_display, NULL);
+	server.backend = wlr_backend_autocreate(server.wl_display, NULL); //yields "root privelege" error
+  //server.backend = wlr_backend_x11_create(server.wl_display, NULL, NULL); //requires wlroots built with x11 backend
 
 	assert(server.backend);
 
