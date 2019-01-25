@@ -7,11 +7,11 @@ project(
 	default_options: [
 		'c_std=c11',
 		'warning_level=2',
-		'werror=true',
+		'werror=false',
 	],
 )
 
-add_project_arguments('-Wno-unused-parameter', language: 'c')
+add_project_arguments(['-Wno-unused-parameter', '-DWLR_USE_UNSTABLE'], language: 'c')
 
 cc = meson.get_compiler('c')
 # Clang complains about some zeroed initializer lists (= {0}), even though they

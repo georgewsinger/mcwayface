@@ -5,7 +5,9 @@
 #include <time.h>
 #include <wayland-server.h>
 #include <wlr/backend.h>
-#include <wlr/render.h>
+//#include <wlr/render.h> //Doesn't work against latest wlroots
+#include <wlr/render/wlr_renderer.h>
+#include <wlr/types/wlr_output.h>
 
 struct mcw_server {
 	struct wl_display *wl_display;
@@ -54,9 +56,12 @@ static void output_frame_notify(struct wl_listener *listener, void *data) {
 	// End pretty color calculation
 
 	wlr_output_make_current(wlr_output, NULL);
-	wlr_renderer_begin(renderer, wlr_output);
 
-	wlr_renderer_clear(renderer, &output->color);
+	//wlr_renderer_begin(renderer, wlr_output); //obsolete calling api
+  //Type signature: void wlr_renderer_begin(struct wlr_renderer *r, int width, int height);
+  wlr_renderer_begin(renderer, wlr_output->width, wlr_output->height);
+
+	wlr_renderer_clear(renderer, (const float *)(&output->color)); //compiler complains about this second argument
 
 	wlr_output_swap_buffers(wlr_output, NULL, NULL);
 	wlr_renderer_end(renderer);
@@ -105,7 +110,9 @@ int main(int argc, char **argv) {
 	server.wl_event_loop = wl_display_get_event_loop(server.wl_display);
 	assert(server.wl_event_loop);
 
-	server.backend = wlr_backend_autocreate(server.wl_display);
+	// server.backend = wlr_backend_autocreate(server.wl_display); //obsolete calling API
+	server.backend = wlr_backend_autocreate(server.wl_display, NULL);
+
 	assert(server.backend);
 
 	wl_list_init(&server.outputs);
